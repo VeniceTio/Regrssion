@@ -1,3 +1,4 @@
+import string
 from sympy import *
 import sys
 
@@ -27,7 +28,7 @@ du point trouvé
 
 def gradPOpti(p_exp, ppt, tolerance):
     """
-    Effectue une descente de gradient simple a pas fixe
+    Effectue une descente de gradient simple a pas optimisé
     :param p_exp: expression de la fonction sur laquel effectuer une descente de gradient
     :param ppt: [val1, .. , valn] point de depart de la descente de gradient
     :param tolerance: float seuil à partir duquel on decidra que l'aproximation est suffisante (par rapport a la norme
@@ -43,6 +44,8 @@ du point trouvé
         vec = list(zip(variables, XK1))
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
+        if pas == -1:
+            break
         XK1 = Xk(vec, pas, grad, size)
         cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
     return XK1
