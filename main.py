@@ -30,6 +30,14 @@ def gradPOpti(p_exp, ppt, tolerance):
     return XK1
 
 
+def gradFletcher(p_exp, ppt, tolerance):
+    return None
+
+
+def gradPolak(p_exp, ppt, tolerance):
+    return None
+
+
 def initForGrad(pexp, ppoint):
     """
     fonction permettant d'initialiser quelque variable necessaire au differente fonction de gradient
@@ -89,14 +97,35 @@ def Xk(pvec, ppas, pgrad, pdim, pmod=0, pcond=1):
     return res
 
 
+
+
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Usage : python main.py expression pas")
+    if len(sys.argv) < 3:
+        print("Usage : python main.py \"expression\" <arg>")
     else:
         f = parse_expr(sys.argv[1])
-        res = gradSimple(f, 0.25, [10, 10], 0.5)
+        if sys.argv[2] == "-S":
+            if len(sys.argv) == 6:
+                print(list(sys.argv[5].split(" ")))
+                print(list(map(float, list(sys.argv[5].split(" ")))))
+                res = gradSimple(f, float(sys.argv[3]), list(map(float, list(sys.argv[5].split(" ")))), float(sys.argv[4]))
+            else:
+                print("Usage : python main.py \"expression\" -S pas tolerance point"+
+                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -S 0.25 0.5 \"10 10\"")
+        elif sys.argv[2] == "-O":
+            if len(sys.argv) == 5:
+                res = gradPOpti(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
+            else:
+                print("Usage : python main.py \"expression\" -0 tolerance point" +
+                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
+        elif sys.argv[2] == "-F":
+            res = gradFletcher(f, [10, 10], 0.5)
+        elif sys.argv[2] == "-P":
+            res = gradPolak(f, [10, 10], 0.5)
+        else:
+            print("Usage : python main.py \"expression\" <arg>")
         variables = f.free_symbols
         vec = list(zip(variables, res))
 
-        print(f.subs(vec))
-        print("resultat : {}".format(res))
+        print("point au plus proche du minimum local {}".format(f.subs(vec)))
+        print("approximation trouvé : {}".format(vec))
