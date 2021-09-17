@@ -30,12 +30,34 @@ def gradPOpti(p_exp, ppt, tolerance):
     return XK1
 
 
-def gradFletcher(p_exp, ppt, tolerance):
-    return None
+def gradFletcher(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulement gradient a pas opti
+    variables, size, p, grad, vec = initForGrad(p_exp, ppt)
+    expas = expPas(ppt, grad, vec, size)  # debut du calcul du pas opti
+    pas = pasOpti(p_exp, list(zip(variables, expas)), p)
+    XK1 = Xk(vec, pas, grad, size)
+    cond = Matrix(XK1).norm()
+    while cond > tolerance:  # calcul condition d'arret
+        vec = list(zip(variables, XK1))
+        expas = expPas(ppt, grad, vec, size)
+        pas = pasOpti(p_exp, list(zip(variables, expas)), p)
+        XK1 = Xk(vec, pas, grad, size)
+        cond = Matrix(XK1).norm()
+    return XK1
 
 
-def gradPolak(p_exp, ppt, tolerance):
-    return None
+def gradPolak(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulement gradient a pas opti
+    variables, size, p, grad, vec = initForGrad(p_exp, ppt)
+    expas = expPas(ppt, grad, vec, size)  # debut du calcul du pas opti
+    pas = pasOpti(p_exp, list(zip(variables, expas)), p)
+    XK1 = Xk(vec, pas, grad, size)
+    cond = Matrix(XK1).norm()
+    while cond > tolerance:  # calcul condition d'arret
+        vec = list(zip(variables, XK1))
+        expas = expPas(ppt, grad, vec, size)
+        pas = pasOpti(p_exp, list(zip(variables, expas)), p)
+        XK1 = Xk(vec, pas, grad, size)
+        cond = Matrix(XK1).norm()
+    return XK1
 
 
 def initForGrad(pexp, ppoint):
@@ -97,8 +119,6 @@ def Xk(pvec, ppas, pgrad, pdim, pmod=0, pcond=1):
     return res
 
 
-
-
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("Usage : python main.py \"expression\" <arg>")
@@ -108,9 +128,10 @@ if __name__ == '__main__':
             if len(sys.argv) == 6:
                 print(list(sys.argv[5].split(" ")))
                 print(list(map(float, list(sys.argv[5].split(" ")))))
-                res = gradSimple(f, float(sys.argv[3]), list(map(float, list(sys.argv[5].split(" ")))), float(sys.argv[4]))
+                res = gradSimple(f, float(sys.argv[3]), list(map(float, list(sys.argv[5].split(" ")))),
+                                 float(sys.argv[4]))
             else:
-                print("Usage : python main.py \"expression\" -S pas tolerance point"+
+                print("Usage : python main.py \"expression\" -S pas tolerance point" +
                       "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -S 0.25 0.5 \"10 10\"")
         elif sys.argv[2] == "-O":
             if len(sys.argv) == 5:
@@ -119,9 +140,17 @@ if __name__ == '__main__':
                 print("Usage : python main.py \"expression\" -0 tolerance point" +
                       "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
         elif sys.argv[2] == "-F":
-            res = gradFletcher(f, [10, 10], 0.5)
+            if len(sys.argv) == 5:
+                res = gradFletcher(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
+            else:
+                print("Usage : python main.py \"expression\" -0 tolerance point" +
+                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
         elif sys.argv[2] == "-P":
-            res = gradPolak(f, [10, 10], 0.5)
+            if len(sys.argv) == 5:
+                res = gradPolak(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
+            else:
+                print("Usage : python main.py \"expression\" -0 tolerance point" +
+                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
         else:
             print("Usage : python main.py \"expression\" <arg>")
         variables = f.free_symbols
