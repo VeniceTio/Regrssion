@@ -64,9 +64,10 @@ du point trouvé
     return XK1
 
 
-def gradFletcher(p_exp, ppt, tolerance):
+def gradFletcher(p_exp, ppt, tolerance, pverbose=0):
+    j = 1
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
-    expas = expPas(ppt, grad, vec, size)  # debut du calcul du pas opti
+    expas = expPas(ppt, grad, vec, size)
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
     XK1 = Xk(vec, pas, grad, size)
     vecm1 = vec
@@ -74,8 +75,10 @@ def gradFletcher(p_exp, ppt, tolerance):
     Bk = (Matrix([grad[i].subs(vec) for i in range(size)]).norm() ** 2) / (
                 Matrix([grad[i].subs(vecm1) for i in range(size)]).norm() ** 2)
     dk1 = [- grad[i].subs(vec) - Bk * grad[i].subs(vecm1) for i in range(size)]
-    cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
-    while cond > tolerance:  # calcul condition d'arret
+    while Matrix([grad[i].subs(vec) for i in range(size)]).norm() > tolerance:
+        if pverbose == 1:
+            print("###\nX{0} : {1}\n B{0} : {2}\n D{3} : {4}".format(j, XK1, Bk, dk1))
+            j += 1
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
         XK1 = Xk(vec, pas, dk1, size, pmod=2)
@@ -84,11 +87,10 @@ def gradFletcher(p_exp, ppt, tolerance):
         Bk = (Matrix([grad[i].subs(vec) for i in range(size)]).norm() ** 2) / (
                 Matrix([grad[i].subs(vecm1) for i in range(size)]).norm() ** 2)
         dk1 = [- grad[i].subs(vec) - Bk * grad[i].subs(vecm1) for i in range(size)]
-        cond = Matrix(XK1).norm()
     return XK1
 
 
-def gradPolak(p_exp, ppt, tolerance):
+def gradPolak(p_exp, ppt, tolerance, pverbose=0):
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
 
     # point d'arrêt
@@ -212,7 +214,7 @@ if __name__ == '__main__':
         f = parse_expr(sys.argv[1])
         if sys.argv[2] == "-S":
             if len(sys.argv) == 6 or len(sys.argv) == 7:
-                if sys.argv[6] == "-v":
+                if len(sys.argv) == 7 and sys.argv[6] == "-v":
                     ver = 1
                 res = gradSimple(f, float(sys.argv[5]), list(map(float, list(sys.argv[4].split(" ")))),
                                  float(sys.argv[3]), ver)
@@ -220,23 +222,23 @@ if __name__ == '__main__':
                 print(printUsage(sys.argv))
         elif sys.argv[2] == "-O":
             if len(sys.argv) == 5 or len(sys.argv) == 6:
-                if sys.argv[5] == "-v":
+                if len(sys.argv) == 6 and sys.argv[5] == "-v":
                     ver = 1
                 res = gradPOpti(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]), ver)
             else:
                 print(printUsage(sys.argv))
         elif sys.argv[2] == "-F":
             if len(sys.argv) == 5 or len(sys.argv) == 6:
-                if sys.argv[5] == "-v":
+                if len(sys.argv) == 6 and sys.argv[5] == "-v":
                     ver = 1
-                res = gradFletcher(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
+                res = gradFletcher(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]), ver)
             else:
                 print(printUsage(sys.argv))
         elif sys.argv[2] == "-P":
             if len(sys.argv) == 5 or len(sys.argv) == 6:
-                if sys.argv[5] == "-v":
+                if len(sys.argv) == 6 and sys.argv[5] == "-v":
                     ver = 1
-                res = gradPolak(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
+                res = gradPolak(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]), ver)
             else:
                 print(printUsage(sys.argv))
         else:
