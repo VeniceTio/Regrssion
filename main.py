@@ -41,7 +41,7 @@ def gradPOpti(p_exp, ppt, tolerance):
     for var in variables:
         grad.append(p_exp.diff(var))
     vec = list(zip(variables, ppt))
-    expas = expPas(ppt, grad, vec, size) # debut du calcul du pas opti
+    expas = expPas(ppt, grad, vec, size) # debut du calcul du pas opti TODO: selction du choix parmi ceux sortie
     vec2 = list(zip(variables, expas))
     p = Symbol('p')
     pas = solve(p_exp.subs(vec2), p)         #fin calcul du pas opti
