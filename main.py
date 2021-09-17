@@ -77,7 +77,7 @@ def gradFletcher(p_exp, ppt, tolerance, pverbose=0):
     dk1 = [- grad[i].subs(vec) - Bk * grad[i].subs(vecm1) for i in range(size)]
     while Matrix([grad[i].subs(vec) for i in range(size)]).norm() > tolerance:
         if pverbose == 1:
-            print("###\nX{0} : {1}\n B{0} : {2}\n D{3} : {4}".format(j, XK1, Bk, dk1))
+            print("###\nX{0} : {1}\n B{0} : {2}\n D{3} : {4}".format(j, XK1, Bk, j+1, dk1))
             j += 1
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
