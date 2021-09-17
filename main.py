@@ -1,3 +1,7 @@
+"""
+TP DESCENTE DE GRADIENT
+Author:  LOUAZEL Yoann, OURO-AGORO Shrafdine, SERGENT Olaf-Marie
+"""
 import string
 from sympy import *
 import sys
@@ -44,22 +48,23 @@ du point trouvé
     expas = expPas(ppt, grad, vec, size)
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
     XK1 = Xk(vec, pas, grad, size)
+    vec = list(zip(variables, XK1))
     cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
     while cond > tolerance:
         if pverbose == 1:
             print("X{} : {}".format(j, XK1))
             j += 1
-        vec = list(zip(variables, XK1))
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
         if pas == -1:
             break
         XK1 = Xk(vec, pas, grad, size)
+        vec = list(zip(variables, XK1))
         cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
     return XK1
 
 
-def gradFletcher(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulement gradient a pas opti
+def gradFletcher(p_exp, ppt, tolerance):
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     expas = expPas(ppt, grad, vec, size)  # debut du calcul du pas opti
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
@@ -69,7 +74,7 @@ def gradFletcher(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulemen
     Bk = (Matrix([grad[i].subs(vec) for i in range(size)]).norm() ** 2) / (
                 Matrix([grad[i].subs(vecm1) for i in range(size)]).norm() ** 2)
     dk1 = [- grad[i].subs(vec) - Bk * grad[i].subs(vecm1) for i in range(size)]
-    cond = Matrix(XK1).norm()
+    cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
     while cond > tolerance:  # calcul condition d'arret
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
@@ -83,7 +88,7 @@ def gradFletcher(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulemen
     return XK1
 
 
-def gradPolak(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulement gradient a pas opti
+def gradPolak(p_exp, ppt, tolerance):
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
 
     # point d'arrêt
@@ -91,7 +96,7 @@ def gradPolak(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulement g
 
     cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
 
-    while (Matrix([grad[i].subs(vec) for i in range(size)]).norm() > 0.5):
+    while Matrix([grad[i].subs(vec) for i in range(size)]).norm() > tolerance:
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
         XK1 = Xk(vec, pas, grad, size)
@@ -239,7 +244,6 @@ if __name__ == '__main__':
         if res != -1:
             variables = f.free_symbols
             vec = list(zip(variables, res))
-
             print("#######    RESULT    #######")
             print("point au plus proche du minimum local {}".format(f.subs(vec)))
             print("approximation trouvé : {}".format(vec))
