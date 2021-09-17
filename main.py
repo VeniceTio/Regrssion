@@ -1,6 +1,9 @@
 """
 TP DESCENTE DE GRADIENT
 Author:  LOUAZEL Yoann, OURO-AGORO Shrafdine, SERGENT Olaf-Marie
+
+Tout les algorithme semble fonctionner sauf la variante Polak-ribieres
+seul les points de type (10,10) (8, 8) ou x = y semble permetre la convergence.
 """
 import string
 from sympy import *
@@ -35,7 +38,7 @@ du point trouvé
 
 def gradPOpti(p_exp, ppt, tolerance, pverbose=0):
     """
-    Effectue une descente de gradient simple a pas optimisé
+    Effectue une descente de gradient a pas optimisé
     :param p_exp: expression de la fonction sur laquel effectuer une descente de gradient
     :param ppt: [val1, .. , valn] point de depart de la descente de gradient
     :param tolerance: float seuil à partir duquel on decidra que l'aproximation est suffisante (par rapport a la norme
@@ -65,6 +68,15 @@ du point trouvé
 
 
 def gradFletcher(p_exp, ppt, tolerance, pverbose=0):
+    """
+        Effectue une descente de gradient celon la variante de Fletcher Reeves
+        :param p_exp: expression de la fonction sur laquel effectuer une descente de gradient
+        :param ppt: [val1, .. , valn] point de depart de la descente de gradient
+        :param tolerance: float seuil à partir duquel on decidra que l'aproximation est suffisante (par rapport a la norme
+    du point trouvé
+        :param pverbose: int par defaut à 0 et si different de 0 alors le mode verbose est activé
+        :return: [val1, .. , valn] point au plus proche du minimum local
+        """
     j = 1
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     expas = expPas(ppt, grad, vec, size)
