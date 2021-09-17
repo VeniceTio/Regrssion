@@ -131,7 +131,7 @@ def Xk(pvec, ppas, pgrad, pdim, pmod=0, pcond=1):
     :return: [val1, .. , valn] point à l'iteration k+1 soit Xk+1
     """
     if pmod == 0:
-        res = [pvec[i][1] - ppas[0] * pgrad[i].subs(pvec) for i in range(pdim)]
+        res = [pvec[i][1] - ppas * pgrad[i].subs(pvec) for i in range(pdim)]
     else:
         res = [(pvec[i][1] - ppas * (pgrad[i].subs(pvec) / pcond)).evalf() for i in range(pdim)]
     return res
