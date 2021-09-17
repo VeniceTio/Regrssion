@@ -15,11 +15,13 @@ du point trouvé
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     cond = Matrix(grad).subs(vec).norm()
     XK1 = Xk(vec, ppas, grad, size, pmod=1, pcond=cond)
-    cond = Matrix(XK1).norm()
+    cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
+    print(cond)
     while cond > tolerance:
         XK1 = Xk(vec, ppas, grad, size, pmod=1, pcond=cond)
         vec = list(zip(variables, XK1))
-        cond = Matrix(XK1).norm()
+        cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
+        print(cond)
     return XK1
 
 
@@ -36,13 +38,13 @@ du point trouvé
     expas = expPas(ppt, grad, vec, size)
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
     XK1 = Xk(vec, pas, grad, size)
-    cond = Matrix(XK1).norm()
+    cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
     while cond > tolerance:
         vec = list(zip(variables, XK1))
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
         XK1 = Xk(vec, pas, grad, size)
-        cond = Matrix(XK1).norm()
+        cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
     return XK1
 
 
