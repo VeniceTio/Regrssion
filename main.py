@@ -4,6 +4,7 @@ Author:  LOUAZEL Yoann, OURO-AGORO Shrafdine, SERGENT Olaf-Marie
 
 Tout les algorithme semble fonctionner sauf la variante Polak-ribieres
 seul les points de type (10,10) (8, 8) ou x = y semble permetre la convergence.
+ce probleme semble provennir de l'implementation de phi qui n'a pas été implémenté celon la dérivé de phi
 """
 import string
 from sympy import *
