@@ -14,11 +14,11 @@ du point trouvé
     :param pverbose: int par defaut à 0 et si different de 0 alors le mode verbose est activé
     :return: [val1, .. , valn] point au plus proche du minimum local
     """
+    j = 1
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     cond = Matrix(grad).subs(vec).norm()
     XK1 = Xk(vec, ppas, grad, size, pmod=1, pcond=cond)
     cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
-    j = 1
     while cond > tolerance:
         if pverbose == 1:
             print("X{} : {}".format(j, XK1))
@@ -39,12 +39,12 @@ du point trouvé
     :param pverbose: int par defaut à 0 et si different de 0 alors le mode verbose est activé
     :return: [val1, .. , valn] point au plus proche du minimum local
     """
+    j = 1
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     expas = expPas(ppt, grad, vec, size)
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
     XK1 = Xk(vec, pas, grad, size)
     cond = Matrix([grad[i].subs(vec) for i in range(size)]).norm()
-    j = 1
     while cond > tolerance:
         if pverbose == 1:
             print("X{} : {}".format(j, XK1))
