@@ -3,6 +3,15 @@ import sys
 
 
 def gradSimple(p_exp, ppas, ppt, tolerance):
+    """
+    Effectue une descente de gradient simple a pas fixe
+    :param p_exp: expression de la fonction sur laquel effectuer une descente de gradient
+    :param ppas: float le pas fixe pour effectuer les differente itération
+    :param ppt: [val1, .. , valn] point de depart de la descente de gradient
+    :param tolerance: float seuil à partir duquel on decidra que l'aproximation est suffisante (par rapport a la norme
+du point trouvé
+    :return: [val1, .. , valn] point au plus proche du minimum local
+    """
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     cond = Matrix(grad).subs(vec).norm()
     XK1 = Xk(vec, ppas, grad, size, pmod=1, pcond=cond)
@@ -16,12 +25,20 @@ def gradSimple(p_exp, ppas, ppt, tolerance):
 
 
 def gradPOpti(p_exp, ppt, tolerance):
+    """
+    Effectue une descente de gradient simple a pas fixe
+    :param p_exp: expression de la fonction sur laquel effectuer une descente de gradient
+    :param ppt: [val1, .. , valn] point de depart de la descente de gradient
+    :param tolerance: float seuil à partir duquel on decidra que l'aproximation est suffisante (par rapport a la norme
+du point trouvé
+    :return: [val1, .. , valn] point au plus proche du minimum local
+    """
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
-    expas = expPas(ppt, grad, vec, size)  # debut du calcul du pas opti
+    expas = expPas(ppt, grad, vec, size)
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
     XK1 = Xk(vec, pas, grad, size)
     cond = Matrix(XK1).norm()
-    while cond > tolerance:  # calcul condition d'arret
+    while cond > tolerance:
         vec = list(zip(variables, XK1))
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
@@ -126,8 +143,8 @@ if __name__ == '__main__':
         f = parse_expr(sys.argv[1])
         if sys.argv[2] == "-S":
             if len(sys.argv) == 6:
-                print(list(sys.argv[5].split(" ")))
-                print(list(map(float, list(sys.argv[5].split(" ")))))
+                #print(list(sys.argv[5].split(" ")))
+                #print(list(map(float, list(sys.argv[5].split(" ")))))
                 res = gradSimple(f, float(sys.argv[3]), list(map(float, list(sys.argv[5].split(" ")))),
                                  float(sys.argv[4]))
             else:
