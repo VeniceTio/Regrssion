@@ -77,12 +77,12 @@ def expPas(ppnt, pgrad, pvec, pdim):
 
 def Xk(pvec, ppas, pgrad, pdim):
     """
-
-    :param pvec:
-    :param ppas:
-    :param pgrad:
-    :param pdim:
-    :return:
+    renvoie le point X k+1 pour une regression
+    :param pvec: [(var1, val1), ...,(varn, valn)] tableau qui associe au valeur de ppnt le nom de la variable à laquel
+    :param ppas: indique le pas necessaire pour l'iteration suivante
+    :param pgrad: [derivepartielEnVar1, .. , derivepartielEnVarn] gradient de la fonction d'origine
+    :param pdim: n dimension du vecteur de la fonction
+    :return: [val1, .. , valn] point à l'iteration k+1 soit Xk+1
     """
     return [pvec[i][1] - ppas[0] * pgrad[i].subs(pvec) for i in range(pdim)]
 
