@@ -31,12 +31,26 @@ def gradPOpti(p_exp, ppt, tolerance):
 
 
 def initForGrad(pexp, ppoint):
+    """
+    fonction permettant d'initialiser quelque variable necessaire au differente fonction de gradient
+    :param pexp: expression de la fonction
+    :param ppoint: premier point X0
+    :return: liste des variable de pexp, nombre de variable, symbol p du pas, initialisation d'un gradient correspondant à pexp, [[(var1, val1), ...,(varn, valn)]
+    """
     variables = pexp.free_symbols
     return variables, len(variables), Symbol('p'), [pexp.diff(var) for var in variables], list(zip(variables, ppoint))
 
 
 def pasOpti(pexprpas, pvec, pp):
+    """
+    fonction permettant de calculer le pas optimal pour Xk+1
+    :param pexprpas: expression de f
+    :param pvec: vecteur trouver pour phi de p
+    :param pp: symbole du pas
+    :return: pas optimisé sinon -1 si fonction a échoué
+    """
     pas = solve(pexprpas.subs(pvec), pp)  # fin calcul du pas opti
+    res = -1
     for e in pas:
         if e > 0:
             res = e
