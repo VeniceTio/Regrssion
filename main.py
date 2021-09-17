@@ -15,7 +15,6 @@ du point trouvé
     variables, size, p, grad, vec = initForGrad(p_exp, ppt)
     cond = Matrix(grad).subs(vec).norm()
     XK1 = Xk(vec, ppas, grad, size, pmod=1, pcond=cond)
-    print(XK1)
     cond = Matrix(XK1).norm()
     while cond > tolerance:
         XK1 = Xk(vec, ppas, grad, size, pmod=1, pcond=cond)
@@ -143,8 +142,6 @@ if __name__ == '__main__':
         f = parse_expr(sys.argv[1])
         if sys.argv[2] == "-S":
             if len(sys.argv) == 6:
-                #print(list(sys.argv[5].split(" ")))
-                #print(list(map(float, list(sys.argv[5].split(" ")))))
                 res = gradSimple(f, float(sys.argv[3]), list(map(float, list(sys.argv[5].split(" ")))),
                                  float(sys.argv[4]))
             else:
