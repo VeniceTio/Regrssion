@@ -202,19 +202,19 @@ def Xk(pvec, ppas, pgrad, pdim, pmod=0, pcond=1):
     return res
 
 
-def printUsage(poption: string):
+def printUsage(poption):
     """
     construit la phrase renvoyé en cas d'erreur de saisi
     :param poption: option d'usage saisie
     :return: chaine renvoyé spécifique à chaque option possible
     """
-    chaine = "Usage : python main.py \"expression\" " + poption + "tolerance point"
+    chaine = "Usage : python main.py \"expression\" " + str(poption) + " tolerance point"
     if poption == "-S":
         chaine += " pas"
         chaine += "\nExemple: python main.py \"(x - y)**2 + x**3 + y**3\" -S 0.5 \"10 10\" 0.25" + \
                   "\nWarning: le pas doit etre strictement superieur à zero"
     else:
-        chaine += "\nExemple: python main.py \"(x - y)**2 + x**3 + y**3\" " + poption + " 0.5 \"10 10\""
+        chaine += "\nExemple: python main.py \"(x - y)**2 + x**3 + y**3\" " + str(poption) + " 0.5 \"10 10\""
     return chaine
 
 
@@ -232,28 +232,28 @@ if __name__ == '__main__':
                 res = gradSimple(f, float(sys.argv[5]), list(map(float, list(sys.argv[4].split(" ")))),
                                  float(sys.argv[3]), ver)
             else:
-                print(printUsage(sys.argv))
+                print(printUsage(sys.argv[2]))
         elif sys.argv[2] == "-O":
             if len(sys.argv) == 5 or len(sys.argv) == 6:
                 if len(sys.argv) == 6 and sys.argv[5] == "-v":
                     ver = 1
                 res = gradPOpti(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]), ver)
             else:
-                print(printUsage(sys.argv))
+                print(printUsage(sys.argv[2]))
         elif sys.argv[2] == "-F":
             if len(sys.argv) == 5 or len(sys.argv) == 6:
                 if len(sys.argv) == 6 and sys.argv[5] == "-v":
                     ver = 1
                 res = gradFletcher(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]), ver)
             else:
-                print(printUsage(sys.argv))
+                print(printUsage(sys.argv[2]))
         elif sys.argv[2] == "-P":
             if len(sys.argv) == 5 or len(sys.argv) == 6:
                 if len(sys.argv) == 6 and sys.argv[5] == "-v":
                     ver = 1
                 res = gradPolak(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]), ver)
             else:
-                print(printUsage(sys.argv))
+                print(printUsage(sys.argv[2]))
         else:
             print("Usage : python main.py \"expression\" <arg> tolerance point")
         if res != -1:
