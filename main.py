@@ -64,12 +64,21 @@ def gradFletcher(p_exp, ppt, tolerance):  # TODO adapter pour le moment seulemen
     expas = expPas(ppt, grad, vec, size)  # debut du calcul du pas opti
     pas = pasOpti(p_exp, list(zip(variables, expas)), p)
     XK1 = Xk(vec, pas, grad, size)
+    vecm1 = vec
+    vec = list(zip(variables, XK1))
+    Bk = (Matrix([grad[i].subs(vec) for i in range(size)]).norm() ** 2) / (
+                Matrix([grad[i].subs(vecm1) for i in range(size)]).norm() ** 2)
+    dk1 = [- grad[i].subs(vec) - Bk * grad[i].subs(vecm1) for i in range(size)]
     cond = Matrix(XK1).norm()
     while cond > tolerance:  # calcul condition d'arret
-        vec = list(zip(variables, XK1))
         expas = expPas(ppt, grad, vec, size)
         pas = pasOpti(p_exp, list(zip(variables, expas)), p)
-        XK1 = Xk(vec, pas, grad, size)
+        XK1 = Xk(vec, pas, dk1, size, pmod=2)
+        vecm1 = vec
+        vec = list(zip(variables, XK1))
+        Bk = (Matrix([grad[i].subs(vec) for i in range(size)]).norm() ** 2) / (
+                Matrix([grad[i].subs(vecm1) for i in range(size)]).norm() ** 2)
+        dk1 = [- grad[i].subs(vec) - Bk * grad[i].subs(vecm1) for i in range(size)]
         cond = Matrix(XK1).norm()
     return XK1
 
@@ -166,6 +175,8 @@ def Xk(pvec, ppas, pgrad, pdim, pmod=0, pcond=1):
     """
     if pmod == 0:
         res = [pvec[i][1] - ppas * pgrad[i].subs(pvec) for i in range(pdim)]
+    elif pmod == 2:
+        res = [pvec[i][1] + ppas * pgrad[i] for i in range(pdim)]
     else:
         res = [(pvec[i][1] - ppas * (pgrad[i].subs(pvec) / pcond)).evalf() for i in range(pdim)]
     return res
@@ -217,7 +228,9 @@ if __name__ == '__main__':
             else:
                 print(printUsage(sys.argv))
         elif sys.argv[2] == "-P":
-            if len(sys.argv) == 5:
+            if len(sys.argv) == 5 or len(sys.argv) == 6:
+                if sys.argv[5] == "-v":
+                    ver = 1
                 res = gradPolak(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
             else:
                 print(printUsage(sys.argv))
