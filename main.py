@@ -140,40 +140,50 @@ def Xk(pvec, ppas, pgrad, pdim, pmod=0, pcond=1):
     return res
 
 
+def printUsage(poption: string):
+    chaine = "Usage : python main.py \"expression\" " + poption + "tolerance point"
+    if poption == "-S":
+        chaine += " pas"
+        chaine += "\nExemple: python main.py \"(x - y)**2 + x**3 + y**3\" -S 0.5 \"10 10\" 0.25" + \
+                  "\nWarning: le pas doit etre strictement superieur à zero"
+    else:
+        chaine += "\nExemple: python main.py \"(x - y)**2 + x**3 + y**3\" " + poption + " 0.5 \"10 10\""
+    return chaine
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("Usage : python main.py \"expression\" <arg>")
     else:
+        res = -1
         f = parse_expr(sys.argv[1])
         if sys.argv[2] == "-S":
             if len(sys.argv) == 6:
-                res = gradSimple(f, float(sys.argv[3]), list(map(float, list(sys.argv[5].split(" ")))),
-                                 float(sys.argv[4]))
+                res = gradSimple(f, float(sys.argv[5]), list(map(float, list(sys.argv[4].split(" ")))),
+                                 float(sys.argv[3]))
             else:
-                print("Usage : python main.py \"expression\" -S pas tolerance point" +
-                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -S 0.25 0.5 \"10 10\"")
+                print(printUsage(sys.argv))
         elif sys.argv[2] == "-O":
             if len(sys.argv) == 5:
                 res = gradPOpti(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
             else:
-                print("Usage : python main.py \"expression\" -0 tolerance point" +
-                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
+                print(printUsage(sys.argv))
         elif sys.argv[2] == "-F":
             if len(sys.argv) == 5:
                 res = gradFletcher(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
             else:
-                print("Usage : python main.py \"expression\" -0 tolerance point" +
-                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
+                print(printUsage(sys.argv))
         elif sys.argv[2] == "-P":
             if len(sys.argv) == 5:
                 res = gradPolak(f, list(map(float, list(sys.argv[4].split(" ")))), float(sys.argv[3]))
             else:
-                print("Usage : python main.py \"expression\" -0 tolerance point" +
-                      "Exemple: python main.py \"(x - y)**2 + x**3 + y**3\" -O 0.5 \"10 10\"")
+                print(printUsage(sys.argv))
         else:
-            print("Usage : python main.py \"expression\" <arg>")
-        variables = f.free_symbols
-        vec = list(zip(variables, res))
+            print("Usage : python main.py \"expression\" <arg> tolerance point")
+        if res != -1:
+            variables = f.free_symbols
+            vec = list(zip(variables, res))
 
-        print("point au plus proche du minimum local {}".format(f.subs(vec)))
-        print("approximation trouvé : {}".format(vec))
+            print("#######    RESULT    #######")
+            print("point au plus proche du minimum local {}".format(f.subs(vec)))
+            print("approximation trouvé : {}".format(vec))
